@@ -1,48 +1,34 @@
 package com.pingr.accounts.Account;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/accounts")
+@RequestMapping(path = "/api/v1/accounts")
 public class AccountController {
-
-    private AccountService accountService;
+    private final AccountService accountService;
 
     @Autowired
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
 
-    @GetMapping("/{userName}")
-    public Account getAccount(@PathVariable("userName") String userName){
-        return accountService.getAccount(userName);
+    // C - POST
+    // R - GET
+    // U - PUT/PATCH
+    // D - DELETE
+
+    @PostMapping // POST /api/v1/accounts
+    public Account createAccount(@RequestBody Account account) {
+        return this.accountService.createAccount(account);
     }
 
+    // query string
+    // GET /api/v1/account?username=joao
     @GetMapping
-    public List<AccountIdAndUsername> searchByUsernameAlike(@RequestParam("usernameAlike") String usernameAlike){
-        return accountService.searchUsernameAlike(usernameAlike);
+    public List<AccountIdAndUsername> searcByUsernameAlike(@RequestParam("usernameAlike") String usernameAlike) {
+        return this.accountService.searchByUsernameAlike(usernameAlike);
     }
-
-    @PostMapping
-    public Account createAccount(@RequestBody Account account){
-        return accountService.create(account);
-    }
-
-    @PutMapping
-    public Account updateAccount(@RequestBody Account account){
-        return accountService.updateAccount(account);
-    }
-
-    @DeleteMapping("/{accountID}")
-    public void deleteAccount(@PathVariable("accountID") Long id){
-        accountService.delete(id);
-    }
-
-
-
-
 }

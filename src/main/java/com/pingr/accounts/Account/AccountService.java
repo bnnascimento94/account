@@ -1,65 +1,35 @@
 package com.pingr.accounts.Account;
 
+import com.pingr.accounts.Account.exceptions.InvalidAccountCreationException;
+import com.pingr.accounts.Account.exceptions.InvalidArgumentsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AccountService {
-
-    private AccountRepository repository;
+    private final AccountRepository accountRepository;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository){
-        this.repository = accountRepository;
+    public AccountService(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
     }
 
-    public Account create(Account account){
+    public Account createAccount(Account account) {
+        if (account == null) throw new InvalidAccountCreationException("conta não pode ser nula");
 
-        if(account == null) throw new IllegalStateException("This Account cannot be null");
-
-        if (repository.findAccountByUsername(account.getUsername()).isPresent()
-        || repository.findAccountByEmail(account.getEmail()).isPresent()){
-
-            throw new IllegalStateException("This Account already exists");
-
+        try {
+            return this.accountRepository.save(account);
+        } catch (Exception e) {
+            throw new InvalidAccountCreationException("conta inválida para criação");
         }
-
-        return repository.save(account);
     }
 
-    public Account updateAccount(Account account){
+    public List<AccountIdAndUsername> searchByUsernameAlike(String usernameAlike) {
+        if (usernameAlike.length() == 0) throw new InvalidArgumentsException("termo de busca vazio");
 
-        if(account == null) throw new IllegalStateException("This Account cannot be null");
-
-        if (repository.findAccountByUsername(account.getUsername()).isPresent()
-                || repository.findAccountByEmail(account.getEmail()).isPresent()){
-
-            return repository.save(account);
-
-        }
-        throw new IllegalStateException("This Account doesn't exist");
-
+        return this.accountRepository.searchByUsernameAlike(usernameAlike);
     }
-
-    public Account getAccount(String username){
-        return repository.findAccountByUsernameOrByEmail(username).orElseThrow(() ->
-                new AccountNotFoundException("No records found with this username")
-        );
-    }
-
-    public void delete(Long id){
-        Account account = repository.findById(id).orElseThrow(()->
-                new AccountNotFoundException("No record found with this ID"));
-
-        repository.delete(account);
-    }
-
-    public List<AccountIdAndUsername> searchUsernameAlike(String usernameAlike){
-        if(usernameAlike.length() ==0) throw  new IllegalStateException("O termo de busca não pode ser vazio");
-
-        return repository.searchByUserNameAlike(usernameAlike);
-    }
-
 }

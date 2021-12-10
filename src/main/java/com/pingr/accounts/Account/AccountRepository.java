@@ -9,8 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
-
-
     @Query("SELECT acc FROM Account acc WHERE acc.username = ?1 OR acc.email = ?1")
     Optional<Account> findAccountByUsernameOrByEmail(String usernameOrEmail);
 
@@ -18,8 +16,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Optional<Account> findAccountByEmail(String email);
 
-    @Query(value = "SELECT a.id, a.username from Account a where a.username like %?1% ", nativeQuery = true)
-    List<AccountIdAndUsername> searchByUserNameAlike(String username);
-
-
+    @Query(value = "SELECT id, username FROM Account WHERE username like %?1%", nativeQuery = true)
+    List<AccountIdAndUsername> searchByUsernameAlike(String usernameAlike);
 }
