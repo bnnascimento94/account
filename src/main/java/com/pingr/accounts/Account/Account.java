@@ -1,10 +1,11 @@
 package com.pingr.accounts.Account;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table
-public class Account {
+public class Account implements Serializable {
     @Id
     @SequenceGenerator(
             name = "account_seq_generator",

@@ -25,6 +25,16 @@ public class AccountController {
         return this.accountService.createAccount(account);
     }
 
+    @PutMapping
+    public Account updateAccount(@RequestBody Account account) {
+        return this.accountService.updateAccount(account);
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public boolean deleteAccount(@PathVariable("id") Long id) {
+        return this.accountService.deleteAccount(id);
+    }
+
     // query string
     // GET /api/v1/account?username=joao
     @GetMapping
